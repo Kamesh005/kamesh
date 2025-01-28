@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Sensor Readings</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/4.2.8/mqtt.min.js"></script>
+</head>
+<body>
+  <h1>Real-Time Sensor Readings</h1>
+  <div>
+    <p>Temperature: <span id="temperature"></span> °C</p>
+    <p>Voltage: <span id="voltage"></span> V</p>
+  </div>
+  <script>
+    const client = mqtt.connect('wss://broker.hivemq.com:8000/mqtt');
+    client.on('connect', () => {
+      client.subscribe('home/temperature');
+      client.subscribe('home/voltage');
+    });
+
+    client.on('message', (topic, message) => {
+      const value = message.toString();
+      if (topic === 'home/temperature') {
+        document.getElementById('temperature').innerText = value;
+      } else if (topic === 'home/voltage') {
+        document.getElementById('voltage').innerText = value;
+      }
+    });
+  </script>
+</body>
+</html>
